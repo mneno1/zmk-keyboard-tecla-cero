@@ -20,8 +20,14 @@ jobs:
         with:
           path: firmware
 
+      - name: Bundle firmware into zip
+        run: |
+          mkdir -p output
+          find firmware -name "*.uf2" -exec cp {} output/ \;
+          cd output && zip ../firmware.zip *.uf2
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: firmware/**/*.uf2
+          files: firmware.zip
           generate_release_notes: true
