@@ -17,7 +17,8 @@
 
     slow-cursor-layer {
         layers = <4>;
-        input-processors = <&zip_xy_scaler 1 2>;
+        input-processors = <&zip_xy_scaler 1 2>,
+                           <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
     };
 };
 
