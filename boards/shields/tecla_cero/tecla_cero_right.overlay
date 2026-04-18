@@ -12,11 +12,22 @@
 
 // トラックボールの座標変換 + レイヤー別スクロール設定
 &pointing_listener {
-    input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
+    input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
+                       <&zip_temp_layer 6 1000>;
 };
 
 // 右側のキーマトリクス列オフセット
 // 右側のCOL0-4を論理的にCOL5-9として扱う
 &default_transform {
     col-offset = <5>;
+};
+
+&zip_temp_layer {
+    require-prior-idle-ms = <200>;
+    excluded-positions = <
+        15 // H
+        16 // J
+        17 // K
+        18 // L
+    >;
 };
