@@ -1,0 +1,113 @@
+name: Build ZMK firmware
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache west modules
+        uses: actions/cache@v4
+        continue-on-error: true
+        with:
+          path: |
+            zephyr
+            modules
+            zmk
+            zmk-*
+          key: ${{ runner.os }}-west-${{ hashFiles('config/west.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-west-
+
+      - name: Init
+        run: |
+          git config --global --add safe.directory ${{ github.workspace }}
+
+          west init -l config
+          west update --narrow
+          west zephyr-export
+
+      - name: Build tecla_cero_left_central
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/left-central \
+            -b bmp_boost \
+            -S "studio-rpc-usb-uart split-central input-split-listener" \
+            -- \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+            -DSHIELD=tecla_cero_left \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+
+      - name: Build tecla_cero_right_peripheral
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/right-peripheral \
+            -b bmp_boost \
+            -S "studio-rpc-usb-uart input-trackball input-split" \
+            -- \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+            -DSHIELD=tecla_cero_right \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+
+      - name: Build tecla_cero_left_peripheral
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/left-peripheral \
+            -b bmp_boost \
+            -S "studio-rpc-usb-uart" \
+            -- \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+            -DSHIELD=tecla_cero_left \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+
+      - name: Build tecla_cero_right_central
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/right-central \
+            -b bmp_boost \
+            -S "studio-rpc-usb-uart split-central input-trackball input-listener" \
+            -- \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+            -DSHIELD=tecla_cero_right \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+
+      - name: Build settings_reset
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/settings-reset \
+            -b bmp_boost \
+            -- \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+            -DSHIELD=settings_reset
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p artifacts
+
+          find build -type f \( -name "*.uf2" -o -name "*.bin" \) \
+          | while read -r file; do
+              cp "$file" artifacts/
+            done
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tecla-cero-firmware
+          path: artifacts
