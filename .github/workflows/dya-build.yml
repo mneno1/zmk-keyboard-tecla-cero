@@ -48,8 +48,7 @@ jobs:
             -S "studio-rpc-usb-uart split-central input-split-listener" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_left \
-            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+            -DSHIELD=tecla_cero_left
 
       - name: Build tecla_cero_right_peripheral
         run: |
@@ -60,8 +59,7 @@ jobs:
             -S "studio-rpc-usb-uart input-trackball input-split" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_right \
-            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+            -DSHIELD=tecla_cero_right
 
       - name: Build tecla_cero_left_peripheral
         run: |
@@ -72,8 +70,7 @@ jobs:
             -S "studio-rpc-usb-uart" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_left \
-            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+            -DSHIELD=tecla_cero_left
 
       - name: Build tecla_cero_right_central
         run: |
@@ -84,8 +81,7 @@ jobs:
             -S "studio-rpc-usb-uart split-central input-trackball input-listener" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_right \
-            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
+            -DSHIELD=tecla_cero_right
 
       - name: Build settings_reset
         run: |
