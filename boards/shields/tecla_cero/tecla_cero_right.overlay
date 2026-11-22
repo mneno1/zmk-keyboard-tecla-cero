@@ -9,6 +9,8 @@
 #include "tecla_cero.dtsi"
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
+#include <input/processors/runtime-input-processor.dtsi>
+#include <behaviors/battery_history_request.dtsi>
 
 // トラックボールの座標変換 + レイヤー別スクロール設定
 &pointing_listener {
