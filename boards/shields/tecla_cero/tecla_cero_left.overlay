@@ -6,6 +6,7 @@
  */
 
 #include "tecla_cero.dtsi"
+#include <behaviors/battery_history_request.dtsi>
 
 // ロータリーエンコーダを有効化
 &left_encoder {
