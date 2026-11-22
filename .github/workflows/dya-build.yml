@@ -1,11 +1,10 @@
-name: Build ZMK firmware
+name: Build ZMK firmware (DYA)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  pull_request:
-  workflow_dispatch:
 
 jobs:
   build:
@@ -23,10 +22,7 @@ jobs:
         continue-on-error: true
         with:
           path: |
-            zephyr
-            modules
-            zmk
-            zmk-*
+            dependencies
           key: ${{ runner.os }}-west-${{ hashFiles('config/west.yml') }}
           restore-keys: |
             ${{ runner.os }}-west-
@@ -48,7 +44,8 @@ jobs:
             -S "studio-rpc-usb-uart split-central input-split-listener" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_left
+            -DSHIELD=tecla_cero_left \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
 
       - name: Build tecla_cero_right_peripheral
         run: |
@@ -59,7 +56,8 @@ jobs:
             -S "studio-rpc-usb-uart input-trackball input-split" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_right
+            -DSHIELD=tecla_cero_right \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
 
       - name: Build tecla_cero_left_peripheral
         run: |
@@ -70,7 +68,8 @@ jobs:
             -S "studio-rpc-usb-uart" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_left
+            -DSHIELD=tecla_cero_left \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
 
       - name: Build tecla_cero_right_central
         run: |
@@ -81,7 +80,8 @@ jobs:
             -S "studio-rpc-usb-uart split-central input-trackball input-listener" \
             -- \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
-            -DSHIELD=tecla_cero_right
+            -DSHIELD=tecla_cero_right \
+            -DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}
 
       - name: Build settings_reset
         run: |
@@ -98,9 +98,7 @@ jobs:
           mkdir -p artifacts
 
           find build -type f \( -name "*.uf2" -o -name "*.bin" \) \
-          | while read -r file; do
-              cp "$file" artifacts/
-            done
+            -exec cp {} artifacts/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
