@@ -1,14 +1,36 @@
 manifest:
   remotes:
-    - name: zmkfirmware
-      url-base: https://github.com/zmkfirmware
+#    - name: zmkfirmware
+#      url-base: https://github.com/zmkfirmware
+    - name: cormoran
+      url-base: https://github.com/cormoran
     - name: sekigon-gonnoc
       url-base: https://github.com/sekigon-gonnoc
   projects:
+#    - name: zmk
+#      remote: zmkfirmware
+#      revision: v0.3
+#      import: app/west.yml
+    # ZMK: DYA Studio 用カスタム RPC サブシステム付き cormoran fork
     - name: zmk
-      remote: zmkfirmware
-      revision: v0.3
+      remote: cormoran
+      revision: v0.3-branch+dya
       import: app/west.yml
+
+    # DYA Studio モジュール（すべて cormoran リポジトリ）
+    - name: zmk-module-ble-management
+      remote: cormoran
+      revision: main
+    - name: zmk-module-battery-history
+      remote: cormoran
+      revision: main
+    - name: zmk-module-settings-rpc
+      remote: cormoran
+      revision: main
+    - name: zmk-module-runtime-input-processor
+      remote: cormoran
+      revision: main
+
     - name: zmk-component-bmp-boost
       remote: sekigon-gonnoc
       import: west.yml
